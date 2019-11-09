@@ -218,7 +218,7 @@ public class Config implements Map<String, String> {
                 previousNode = thisNode;
             }
         } catch (NoSuchElementException | IllegalStateException e) {
-            D2BC.getLogger().severe("Exception while parsing new config input stream at line " + lineIndex);
+            D2BC.getPlugin().getLogger().severe("Exception while parsing new config input stream at line " + lineIndex);
             throw new InvalidConfigurationException();
         }
     }

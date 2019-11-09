@@ -11,7 +11,7 @@ public interface D2BCCommand {
     boolean hasPermission(User user);
 
     /**
-     * Take action based on the provided messasge. This method should provide
+     * Take action based on the provided messasge. All feedback should be generated within this method.
      * @param event MessageReceivedEvent to process
      * @return Whether the command successfully executed, or whether there was a syntax error (wrong type of argument, invalid state, etc.)
      */

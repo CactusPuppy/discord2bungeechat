@@ -1,21 +1,21 @@
 package com.github.cactuspuppy.d2bc;
 
 import lombok.Getter;
+import net.dv8tion.jda.api.JDA;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
+import com.github.cactuspuppy.d2bc.utils.Config;
 
 public class D2BC extends JavaPlugin {
     @Getter private static D2BC plugin;
-    @Getter private static Logger logger;
+    @Getter private Config config;
+    @Getter private JDA jda;
 
     @Override
     public void onEnable() {
         long start = System.currentTimeMillis();
         plugin = this;
-        logger = Logger.getLogger("D2BC");
         long elapsedMS = System.currentTimeMillis() - start;
-
+        getLogger().info("");
     }
 
     private void loadConfig() {
