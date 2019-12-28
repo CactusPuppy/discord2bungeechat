@@ -5,5 +5,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class AccountManager {
-    protected static ConcurrentMap<UUID, D2BCAccount> accounts = new ConcurrentHashMap<>();
+    protected static ConcurrentMap<UUID, D2BCAccount> mcUIDMap = new ConcurrentHashMap<>();
+
+    protected static ConcurrentHashMap<Long, D2BCAccount> discordIDMap = new ConcurrentHashMap<>();
+
+
 }

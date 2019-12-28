@@ -2,7 +2,6 @@ package com.github.cactuspuppy.d2bc.utils;
 
 import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,7 +44,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testEmpty() throws InvalidConfigurationException {
+    public void testEmpty() throws RuntimeException {
         String input =
         "# Empty config";
         testConfig.loadFromString(input);
@@ -79,7 +78,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void simpleTest() throws InvalidConfigurationException {
+    public void simpleTest() throws RuntimeException {
         String input =
         "key: value";
 
@@ -88,7 +87,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void indentTest() throws InvalidConfigurationException {
+    public void indentTest() throws RuntimeException {
         String input =
         "object:\n" +
         "  key: value02";
@@ -98,7 +97,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void sizeTest01() throws InvalidConfigurationException {
+    public void sizeTest01() throws RuntimeException {
         String input =
         "object:\n" +
         "  key: value02\n";
@@ -108,7 +107,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void sizeTest02() throws InvalidConfigurationException {
+    public void sizeTest02() throws RuntimeException {
         String input =
         "\n\n# Starter comment\n" +
         "# =========== #\n" +
@@ -120,7 +119,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void commentTest01() throws InvalidConfigurationException {
+    public void commentTest01() throws RuntimeException {
         String input =
         "#============#\n" +
         "# Beep Boop\n" +
@@ -132,7 +131,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void commentTest02() throws InvalidConfigurationException {
+    public void commentTest02() throws RuntimeException {
         String input =
         "#============#\n" +
         "# Beep Boop\n" +
@@ -145,7 +144,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void commentTestInline() throws InvalidConfigurationException {
+    public void commentTestInline() throws RuntimeException {
         String input =
         "# Starting comment\n" +
         "key: value-00  # inline comment\n" +
@@ -170,7 +169,7 @@ public class ConfigTest {
         String input =
         "# Valid comment\n" +
         "  Invalid # line\n";
-        assertThrows(InvalidConfigurationException.class, () -> testConfig.loadFromString(input));
+        assertThrows(RuntimeException.class, () -> testConfig.loadFromString(input));
 
         String input2 =
         "# Valid starting comment\n" +
@@ -178,11 +177,11 @@ public class ConfigTest {
         "  validkey: value  # inline\n" +
         "  # valid standalone\n" +
         "  invalid # commented line\n";
-        assertThrows(InvalidConfigurationException.class, () -> testConfig.loadFromString(input2));
+        assertThrows(RuntimeException.class, () -> testConfig.loadFromString(input2));
     }
 
     @Test
-    public void testTopLevelAdd() throws InvalidConfigurationException {
+    public void testTopLevelAdd() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key: value\n";
@@ -192,7 +191,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSubkeyAdd() throws InvalidConfigurationException {
+    public void testSubkeyAdd() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key: value\n";
@@ -203,7 +202,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testKeyAndSubkeyAdd() throws InvalidConfigurationException {
+    public void testKeyAndSubkeyAdd() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key: value\n";
@@ -215,7 +214,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSubkeyWithoutTopKey() throws InvalidConfigurationException {
+    public void testSubkeyWithoutTopKey() throws RuntimeException {
         String input =
         "\n\n# Starter comment\n" +
         "key: value\n";
@@ -226,7 +225,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testKeyRemoval() throws InvalidConfigurationException {
+    public void testKeyRemoval() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key2: value2\n";
@@ -238,7 +237,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSubkeyRemoval() throws InvalidConfigurationException {
+    public void testSubkeyRemoval() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key2: value2\n" +
@@ -251,7 +250,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testTopKeyRemove() throws InvalidConfigurationException {
+    public void testTopKeyRemove() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key2: value2\n" +
@@ -265,7 +264,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testTopKeyKill() throws InvalidConfigurationException {
+    public void testTopKeyKill() throws RuntimeException {
         String input =
         "# Starter comment\n" +
         "key2: value2\n" +
@@ -281,7 +280,7 @@ public class ConfigTest {
 
     @SuppressWarnings("ConstantConditions")
     @Test
-    public void testClear() throws InvalidConfigurationException {
+    public void testClear() throws RuntimeException {
         String input =
         "topkey: value\n" +
         "  subkey: value\n";
@@ -292,7 +291,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testLoad01() throws InvalidConfigurationException, IOException {
+    public void testLoad01() throws RuntimeException, IOException {
         File config01 = new File(getClass().getResource("/config01.yml").getFile());
         testConfig.load(config01);
         assertFalse(testConfig.isEmpty());
@@ -302,7 +301,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testLoad02() throws InvalidConfigurationException, IOException {
+    public void testLoad02() throws RuntimeException, IOException {
         File config02 = new File(getClass().getResource("/config02.yml").getFile());
         testConfig.load(config02);
         assertFalse(testConfig.isEmpty());
@@ -314,7 +313,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSaveToString() throws InvalidConfigurationException {
+    public void testSaveToString() throws RuntimeException {
         String config =
         "\n\n#==============#\n" +
         "# Header comment\n" +
@@ -329,7 +328,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSaveNoMod01() throws InvalidConfigurationException, IOException {
+    public void testSaveNoMod01() throws RuntimeException, IOException {
         File config01 = new File(getClass().getResource("/config01.yml").getFile());
         testConfig.load(config01);
         File saved01 = File.createTempFile("config01-temp", ".yml", tempDirectory);
@@ -348,7 +347,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSaveNoMod02() throws InvalidConfigurationException, IOException {
+    public void testSaveNoMod02() throws RuntimeException, IOException {
         File config02 = new File(getClass().getResource("/config02.yml").getFile());
         testConfig.load(config02);
         File saved02 = File.createTempFile("config02-temp", ".yml", tempDirectory);
@@ -362,7 +361,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSaveAfterMod01() throws InvalidConfigurationException, IOException {
+    public void testSaveAfterMod01() throws RuntimeException, IOException {
         File config02 = new File(getClass().getResource("/config02.yml").getFile());
         File config02Mod = new File(getClass().getResource("/config02-top.yml").getFile());
         testConfig.load(config02);
@@ -387,7 +386,7 @@ public class ConfigTest {
     }
 
     @Test
-    public void testSaveAfterMod02() throws InvalidConfigurationException, IOException {
+    public void testSaveAfterMod02() throws RuntimeException, IOException {
         File config02 = new File(getClass().getResource("/config02.yml").getFile());
         File target = new File(getClass().getResource("/config02-fullmod.yml").getFile());
         testConfig.load(config02);

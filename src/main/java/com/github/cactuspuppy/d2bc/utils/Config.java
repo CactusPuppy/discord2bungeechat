@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,10 +71,10 @@ public class Config implements Map<String, String> {
      * Loads the specified YAML-style file into the config, dropping all previous keys, values, and comments.
      * @param configFile File to load from
      * @throws IllegalArgumentException      If {@code configFile} is null
-     * @throws InvalidConfigurationException If the file is not a valid config file
+     * @throws RuntimeException              If the file is not a valid config file
      * @throws IOException                   If the file cannot be read for any reason
      */
-    public void load(File configFile) throws IllegalArgumentException, InvalidConfigurationException, IOException {
+    public void load(File configFile) throws IllegalArgumentException, RuntimeException, IOException {
         if (configFile == null) {
             throw new IllegalArgumentException("Config file must not be null");
         }
@@ -88,12 +87,12 @@ public class Config implements Map<String, String> {
      * Loads the specified YAML-style file into the config, dropping all previous keys, values, and comments.
      * @param fileName File to load
      * @throws IllegalArgumentException      If {@code fileName} is null or empty
-     * @throws InvalidConfigurationException If the file is not a valid config file
+     * @throws RuntimeException              If the file is not a valid config file
      * @throws IOException                   If the file cannot be read for any reason
      * @throws FileNotFoundException         If the file corresponding to {@code fileName} could not be found
      */
     public void load(String fileName) throws IllegalArgumentException, FileNotFoundException,
-    InvalidConfigurationException, IOException {
+    RuntimeException, IOException {
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Filename must not be empty or null");
         }
@@ -109,16 +108,16 @@ public class Config implements Map<String, String> {
      * config file, dropping all previous keys, values, and comments.
      * @param configString String to read from
      * @throws IllegalArgumentException If {@code configString} is null or empty
-     * @throws InvalidConfigurationException If {@code configString} is not a valid config string
+     * @throws RuntimeException If {@code configString} is not a valid config string
      */
-    public void loadFromString(String configString) throws IllegalArgumentException, InvalidConfigurationException {
+    public void loadFromString(String configString) throws IllegalArgumentException, RuntimeException {
         if (configString == null || configString.isEmpty()) {
             throw new IllegalArgumentException("Filename must not be empty or null");
         }
         loadInputStream(new ByteArrayInputStream(configString.getBytes()));
     }
 
-    private void loadInputStream(InputStream stream) throws InvalidConfigurationException {
+    private void loadInputStream(InputStream stream) {
         int lineIndex = 0;
         try (Scanner scan = new Scanner(stream)) {
             //Track indent levels
@@ -178,8 +177,8 @@ public class Config implements Map<String, String> {
                     thisNode = thisKeyNode;
                 } else if (hasComment) { // Comment Node
                     if (line.length() > 0) {
-                        throw new InvalidConfigurationException(
-                        String.format("Invalid sequence on line %d: %s", lineIndex, line)
+                        throw new RuntimeException(
+                            String.format("Invalid sequence on line %d: %s", lineIndex, line)
                         );
                     }
                     currIndent = prevIndent;
@@ -206,8 +205,8 @@ public class Config implements Map<String, String> {
                     blankNode.incrLineCount();
                     thisNode = blankNode;
                 } else {
-                    throw new InvalidConfigurationException(
-                    String.format("Invalid sequence on line %d: %s", lineIndex, line)
+                    throw new RuntimeException(
+                        String.format("Invalid sequence on line %d: %s", lineIndex, line)
                     );
                 }
 
@@ -219,7 +218,7 @@ public class Config implements Map<String, String> {
             }
         } catch (NoSuchElementException | IllegalStateException e) {
             D2BC.getPlugin().getLogger().severe("Exception while parsing new config input stream at line " + lineIndex);
-            throw new InvalidConfigurationException();
+            throw new RuntimeException();
         }
     }
 
@@ -229,7 +228,7 @@ public class Config implements Map<String, String> {
             currentParents.addLast(previousKeyNode);
             currIndents.add(prevIndent);
         } else if (currIndent < prevIndent) {
-            while (currIndent <= currIndents.peekLast()) {
+            while (!currIndents.isEmpty() && currIndent <= currIndents.peekLast()) {
                 currIndents.removeLast();
                 if (!currentParents.isEmpty()) currentParents.removeLast();
             }

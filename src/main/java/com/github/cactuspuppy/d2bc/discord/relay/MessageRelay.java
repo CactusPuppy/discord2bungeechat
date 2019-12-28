@@ -1,9 +1,9 @@
 package com.github.cactuspuppy.d2bc.discord.relay;
 
 import com.github.cactuspuppy.d2bc.D2BC;
+import com.github.cactuspuppy.d2bc.account.AccountManager;
 import com.github.cactuspuppy.d2bc.utils.Pair;
 import dev.aura.bungeechat.api.BungeeChatApi;
-import dev.aura.bungeechat.api.account.AccountManager;
 import dev.aura.bungeechat.api.account.BungeeChatAccount;
 import dev.aura.bungeechat.api.placeholder.BungeeChatContext;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -47,6 +47,6 @@ public class MessageRelay extends ListenerAdapter {
             D2BC.getPlugin().getLogger().log(Level.FINE, "Could not relay Discord message: " + result.getSecond());
             return;
         }
-        AccountManager.getAccount()
+        // AccountManager
     }
 }
