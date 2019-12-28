@@ -11,10 +11,17 @@ public interface D2BCCommand {
     boolean hasPermission(User user);
 
     /**
-     * Take action based on the provided messasge. All feedback should be generated within this method.
+     * Take action based on the provided messasge. All feedback
+     * and second-hand effects (including deleting messages) except
+     * permission checking should be generated within this method.
      * @param event MessageReceivedEvent to process
-     * @return Whether the command successfully executed, or whether there was a syntax error (wrong type of argument, invalid state, etc.)
      */
-    boolean processMessage(MessageReceivedEvent event);
+    void processMessage(MessageReceivedEvent event);
 
+    /**
+     * Get the main name of this command. The main name of the command is
+     * used as follows: "/discord &lt;name&gt; &lt;args&gt;"
+     * @return the main name of the command
+     */
+    String getMainName();
 }

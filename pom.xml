@@ -20,8 +20,8 @@
         <!--BungeeChat2-->
         <repository>
             <id>AuraDevelopmentTeam</id>
-            <url>https://maven.aura-dev.team/repository/auradev-releases/</url>
-            <!--<url>https://maven.aura-dev.team/repository/auradev-snapshots/</url>-->
+<!--            <url>https://maven.aura-dev.team/repository/auradev-releases/</url>-->
+            <url>https://maven.aura-dev.team/repository/auradev-snapshots/</url>
         </repository>
         <!--papermc-->
         <repository>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>dev.aura.bungeechat</groupId>
             <artifactId>BungeeChatApi</artifactId>
-            <version>2.1.6.855</version>
+            <version>2.1.7.1047-DEV</version>
             <scope>provided</scope>
         </dependency>
         <!--paper-->
