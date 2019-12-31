@@ -1,21 +1,20 @@
 package com.github.cactuspuppy.d2bc.discord.relay;
 
 import com.github.cactuspuppy.d2bc.D2BC;
-import com.github.cactuspuppy.d2bc.account.AccountManager;
-import com.github.cactuspuppy.d2bc.account.D2BCAccount;
 import com.github.cactuspuppy.d2bc.discord.command.CommandHub;
 import com.github.cactuspuppy.d2bc.utils.Pair;
-import dev.aura.bungeechat.api.BungeeChatApi;
-import dev.aura.bungeechat.api.account.BungeeChatAccount;
-import dev.aura.bungeechat.api.placeholder.BungeeChatContext;
+import dev.aura.bungeechat.api.account.AccountManager;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
+import java.util.logging.Level;
 
 public class MessageRelay extends ListenerAdapter {
+    /**
+     * The ID of the Discord channel to listen to
+     */
     private String channelID;
 
     public MessageRelay() {
@@ -46,14 +45,18 @@ public class MessageRelay extends ListenerAdapter {
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
         Pair<TextChannel, String> result = fetchChannel();
         if (result.getFirst() == null) {
-            D2BC.getPlugin().getLogger().log(Level.FINE, "Could not relay Discord message: " + result.getSecond());
+            D2BC.getPlugin().getLogger().log(Level.WARNING, "Could not relay Discord message: " + result.getSecond());
             return;
         }
         String message = event.getMessage().getContentStripped();
         if (message.startsWith(CommandHub.getPrefix())) {
+            // Let command handler handle it
             return;
         }
-        D2BCAccount account = AccountManager.
-        // AccountManager
+        if (!result.getFirst().getId().equals(channelID)) {
+            // Not the channel to listen to
+            return;
+        }
+        // MessageRelay
     }
 }
