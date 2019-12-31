@@ -9,9 +9,9 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class D2BC extends Plugin {
     @Getter private static D2BC plugin;
+    @Getter private static CommandHub commandHub;
     @Getter private Config config;
     @Getter private JDA jda;
-    @Getter private CommandHub commandHub;
 
     @Override
     public void onEnable() {

@@ -9,5 +9,11 @@ public class AccountManager {
 
     protected static ConcurrentHashMap<Long, D2BCAccount> discordIDMap = new ConcurrentHashMap<>();
 
+    public void saveToDisk() {
+        //TODO
+    }
 
+    public D2BCAccount fetchMCAccount(UUID uuid) {
+
+    }
 }
