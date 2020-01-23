@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class CommandHub extends ListenerAdapter {
+public class DiscordCommandHub extends ListenerAdapter {
     private Map<String, D2BCCommand> handlerMap = new HashMap<>();
     @Getter @Setter
     private static String prefix = ";";
 
-    public CommandHub() {
+    public DiscordCommandHub() {
         reinitialize();
     }
 
@@ -61,7 +61,7 @@ public class CommandHub extends ListenerAdapter {
             // Unrecognized command
             MessageBuilder messageBuilder = new MessageBuilder();
             messageBuilder.append(e.getAuthor());
-            messageBuilder.appendCodeLine(";" + message);
+            messageBuilder.appendCodeLine(";" + message.replaceFirst(";", ""));
             messageBuilder.append(" is not a known command");
             e.getChannel().sendMessage(messageBuilder.build()).queue(msg -> {
                 msg.delete().queueAfter(5L, TimeUnit.SECONDS);

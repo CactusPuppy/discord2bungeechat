@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-public class MessageRelayTest {
+public class DiscordAdapterTest {
 
     @Test
     public void emptyTest() {

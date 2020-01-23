@@ -1,19 +1,15 @@
 package com.github.cactuspuppy.d2bc.discord.command;
 
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.junit.Test;
 
-import javax.annotation.Nonnull;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommandHubTest {
+public class DiscordCommandHubTest {
 
     @Test
     public void registerNewCommand() {
-        CommandHub hub = new CommandHub();
+        DiscordCommandHub hub = new DiscordCommandHub();
         assertFalse(hub.registerCommand(new Ping()));
         assertTrue(hub.registerCommand(new FakeD2BCCommand()));
     }

@@ -1,0 +1,6 @@
+name: Discord2BungeeChat
+main: com.github.cactuspuppy.d2bc.D2BC
+version: @VERSION@
+author: CactusPuppy
+depend:
+  - BungeeChat
