@@ -1,0 +1,19 @@
+
+#=============#
+# Top-level comment
+#==============#
+# This is the comment for key1
+key1: value1
+  subkey1-1: value1-1 #Inline comment for subkey1-1
+  # Top comment for subkey1-2
+  subkey1-2: value1-2
+    supersubkey: supersubvalue
+
+# This is a block
+# for key2
+awkward: modification
+
+
+# The previous 2 blank lines tbh
+key2: moved
+  subkey2-1: down here

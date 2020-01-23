@@ -36,12 +36,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>dev.aura.bungeechat</groupId>
-            <artifactId>BungeeChatApi</artifactId>
-            <version>2.1.7.1047-DEV</version>
-            <scope>provided</scope>
-        </dependency>
         <!--paper-->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
