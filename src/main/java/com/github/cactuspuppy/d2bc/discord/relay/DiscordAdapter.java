@@ -29,14 +29,9 @@ public class DiscordAdapter extends ListenerAdapter {
         super();
         this.channelID = D2BC.getPlugin().getConfig().getOrDefault("discord.channelID", null);
         if (this.channelID == null || this.channelID.equals("<CHANGE ME>")) {
-            D2BC.getPlugin().getLogger().warning("Channel ID not provided in config! " +
+            D2BC.getPlugin().getLogger().severe("Channel ID not provided in config! " +
                     "Please set discord.channelID to the channel that you would like to relay chat to.");
             this.channelID = null;
-            return;
-        }
-        Pair<TextChannel, String> result = fetchChannel();
-        if (result.getFirst() == null) {
-            D2BC.getPlugin().getLogger().info("Failed to validate Discord Channel ID: " + result.getSecond());
         }
     }
 
@@ -45,9 +40,9 @@ public class DiscordAdapter extends ListenerAdapter {
      * @return A pair of the TextChannel on success or null ,
      * and a String explaining the error if any
      */
-    private Pair<TextChannel, String> fetchChannel() {
+    public Pair<TextChannel, String> fetchChannel() {
         if (channelID == null) {
-            D2BC.getPlugin().getLogger().warning("No Channel ID set");
+            return new Pair<>(null, "No Channel ID set");
         }
         TextChannel channel = D2BC.getPlugin().getJda().getTextChannelById(channelID);
         if (channel == null) {
@@ -107,6 +102,7 @@ public class DiscordAdapter extends ListenerAdapter {
                 break;
             case "SWITCH":
                 relaySwitchEvent(server, user);
+                break;
             default:
                 D2BC.getPlugin().getLogger().warning(String.format("Unknown BungeeChat event: %s", type));
         }
@@ -152,7 +148,7 @@ public class DiscordAdapter extends ListenerAdapter {
         builder.append(String.format("%s ", user), MessageBuilder.Formatting.BOLD);
         builder.append("has joined the ");
         builder.append(String.format("%s ", server), MessageBuilder.Formatting.BOLD);
-        builder.append(" server");
+        builder.append("server");
         builder.stripMentions(D2BC.getPlugin().getJda());
         result.getFirst().sendMessage(builder.build()).queue();
     }
