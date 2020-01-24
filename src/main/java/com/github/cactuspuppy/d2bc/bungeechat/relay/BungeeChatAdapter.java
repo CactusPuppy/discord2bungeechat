@@ -56,8 +56,21 @@ public class BungeeChatAdapter {
 
     // Adapted from https://stackoverflow.com/a/40003648
     public BungeeChatAdapter(Path bungeeChatLogsPath) {
-        //TODO: Load and save lastLineRead to disk
-        lastLineRead = -1;
+        File lastLineReadDisk = new File(D2BC.getPlugin().getDataFolder(), lastReadFilePath);
+        if (Files.isReadable(lastLineReadDisk.toPath())) {
+            try (Scanner scanner = new Scanner(lastLineReadDisk)) {
+                lastLineRead = scanner.nextLong();
+                D2BC.getPlugin().getLogger().info("Restored last line read: " + lastLineRead);
+            } catch (FileNotFoundException e) {
+                D2BC.getPlugin().getLogger().log(Level.SEVERE, "Faulty file check", e);
+            } catch (Exception e) {
+                D2BC.getPlugin().getLogger().log(Level.WARNING, "Exception while loading log read state," +
+                        " defaulting to reading all of newest log file.", e);
+                lastLineRead = -1;
+            }
+        } else {
+            lastLineRead = -1;
+        }
         logsPath = bungeeChatLogsPath;
         if (!Files.isDirectory(logsPath)) {
             D2BC.getPlugin().getLogger().warning("BungeeChat logs folder does not exist! " +
@@ -91,6 +104,7 @@ public class BungeeChatAdapter {
      */
     @SuppressWarnings("FieldCanBeLocal")
     private Runnable processLogChanges = () -> {
+        long currentLatestLineRead = lastLineRead;
         // Check for newer file
         LocalDateTime now = LocalDateTime.now();
         Path todayLog = Paths.get(ProxyServer.getInstance().getPluginsFolder().getAbsolutePath(),
@@ -109,6 +123,16 @@ public class BungeeChatAdapter {
             latestLogPath = todayLog;
         }
         relayNewMessages(latestLogPath);
+        // If lastLineRead has changed, update on disk
+        if (currentLatestLineRead != lastLineRead) {
+            D2BC.getPlugin().getLogger().fine("Writing new lastLineRead to disk: " + lastLineRead);
+            File lastRead = new File(D2BC.getPlugin().getDataFolder(), lastReadFilePath);
+            try (FileWriter writer = new FileWriter(lastRead, false)) {
+                writer.write(String.valueOf(lastLineRead));
+            } catch (IOException e) {
+                D2BC.getPlugin().getLogger().log(Level.SEVERE, "Exception while writing out log read state", e);
+            }
+        }
     };
 
     private void relayNewMessages(Path logFile) {
