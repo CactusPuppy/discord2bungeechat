@@ -26,6 +26,7 @@ public class D2BC extends Plugin {
     @Getter private static D2BC plugin;
     @Getter private static DiscordCommandHub discordCommandHub;
     @Getter private FileConfig config;
+    @Getter private File logsFolder;
     @Getter private JDA jda;
     @Getter private BungeeChatAdapter bungeeChatAdapter;
     @Getter private DiscordAdapter discordAdapter;
@@ -35,6 +36,7 @@ public class D2BC extends Plugin {
         long start = System.currentTimeMillis();
         plugin = this;
         loadConfig();
+        initLogs();
         startJDA();
         registerListeners();
         long elapsedMS = System.currentTimeMillis() - start;
@@ -101,6 +103,15 @@ public class D2BC extends Plugin {
         }
         this.config = new FileConfig(new File(getDataFolder(), "config.yml"));
         this.config.reload();
+    }
+
+    private void initLogs() {
+        //Initiate or get logs folder
+        logsFolder = new File(getDataFolder(), "logs");
+        if (!logsFolder.isDirectory() && !logsFolder.mkdirs()) {
+            getLogger().severe("Could not find or create logs folder.");
+            logsFolder = null;
+        }
     }
 
     private void registerListeners() {
