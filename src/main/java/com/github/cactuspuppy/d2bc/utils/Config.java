@@ -424,7 +424,7 @@ public class Config implements Map<String, String> {
     }
 
     /**
-     * Add a standalone comment to the end of the config.<br/>
+     * Add a standalone comment to the end of the config.<br>
      * This comment is automatically prepended by "#";
      * any spaces after the "#" must be manually included in {@code comment}.
      * @param comment Comment to add
@@ -439,6 +439,7 @@ public class Config implements Map<String, String> {
 
     /**
      * {@code indent} defaulted to 0
+     * @param comment Comment to add
      *
      * @see #addComment(String, int)
      */
@@ -458,6 +459,7 @@ public class Config implements Map<String, String> {
 
     /**
      * {@code indent} defaulted to 0
+     * @param lines Number of blank lines to add
      *
      * @see #addBlankLines(int, int)
      */

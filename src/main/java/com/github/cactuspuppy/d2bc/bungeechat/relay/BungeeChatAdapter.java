@@ -1,6 +1,8 @@
 package com.github.cactuspuppy.d2bc.bungeechat.relay;
 
 import com.github.cactuspuppy.d2bc.D2BC;
+import emoji4j.EmojiManager;
+import emoji4j.EmojiUtils;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -10,6 +12,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
+import org.jetbrains.annotations.Contract;
 
 import java.io.File;
 import java.io.FileNotFoundException;

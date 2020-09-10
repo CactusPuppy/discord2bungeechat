@@ -71,10 +71,8 @@ public class DiscordCommandHub extends ListenerAdapter {
         if (!handler.hasPermission(e.getAuthor())) {
             MessageBuilder msgBuilder = new MessageBuilder();
             msgBuilder.append(e.getAuthor());
-            msgBuilder.append(" You do not have permission to use this command!");
-            e.getChannel().sendMessage(msgBuilder.build()).queue(msg -> {
-                msg.delete().queueAfter(5L, TimeUnit.SECONDS);
-            });
+            msgBuilder.append("You do not have permission to use this command!");
+            e.getChannel().sendMessage(msgBuilder.build()).queue(msg -> msg.delete().queueAfter(5L, TimeUnit.SECONDS));
             return;
         }
         handler.processMessage(e);

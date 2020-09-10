@@ -4,3 +4,5 @@ version: @VERSION@
 author: CactusPuppy
 depend:
   - BungeeChat
+softdepend:
+  - PremiumVanish
