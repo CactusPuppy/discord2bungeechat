@@ -1,7 +1,6 @@
 package com.github.cactuspuppy.d2bc.bungeechat.relay;
 
 import com.github.cactuspuppy.d2bc.D2BC;
-import emoji4j.EmojiManager;
 import emoji4j.EmojiUtils;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.md_5.bungee.api.ChatColor;
@@ -24,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,27 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class BungeeChatAdapter {
-    private static Pattern bungeeChatPattern = Pattern.compile("^\\[\\d{2}:\\d{2}:\\d{2}\\]: ([A-Z]+) > ([A-Za-z]+) > ([A-Za-z0-9_~]{3,16})\\([a-z0-9-]+\\): (.+)");
+    private static final Pattern bungeeChatPattern = Pattern.compile("^\\[\\d{2}:\\d{2}:\\d{2}\\]: ([A-Z]+) > ([A-Za-z]+) > ([A-Za-z0-9_~]{3,16})\\([a-z0-9-]+\\): (.+)");
+    private static final Map<String, String> unicodeToShortcutMap = new HashMap<>();
+    static {
+        // From https://www.reddit.com/r/discordapp/comments/bt4anb/all_of_the_discord_emoji_shortcuts_that_ive_found/
+        unicodeToShortcutMap.put("\uD83D\uDE42", ":)");
+        unicodeToShortcutMap.put("\uD83D\uDE41", ":(");
+        unicodeToShortcutMap.put("\uD83D\uDE04", ":D");
+        unicodeToShortcutMap.put("\uD83D\uDE2E", ":O");
+        unicodeToShortcutMap.put("\uD83D\uDE10", ":|");
+        unicodeToShortcutMap.put("\uD83D\uDE2D", ";(");
+        unicodeToShortcutMap.put("\uD83D\uDE22", ":'(");
+        unicodeToShortcutMap.put("\uD83D\uDE20", ">:(");
+        unicodeToShortcutMap.put("\uD83D\uDE1B", ":P");
+        unicodeToShortcutMap.put("\uD83D\uDE05", ",:)");
+        unicodeToShortcutMap.put("\uD83D\uDE12", ":$");
+        unicodeToShortcutMap.put("\uD83D\uDE21", ":@");
+        unicodeToShortcutMap.put("\u2764\uFE0F", "<3");
+        unicodeToShortcutMap.put("\ud83d\ude09", ";)");
+        unicodeToShortcutMap.put("\ud83d\ude02", ":')");
+        unicodeToShortcutMap.put("\ud83d\ude13", ",:(");
+    }
 
     /**
      * Path to BungeeChat logs folder
@@ -106,7 +127,7 @@ public class BungeeChatAdapter {
      * Checks for new chat log changes
      */
     @SuppressWarnings("FieldCanBeLocal")
-    private Runnable processLogChanges = () -> {
+    private final Runnable processLogChanges = () -> {
         long currentLatestLineRead = lastLineRead;
         // Check for newer file
         LocalDateTime now = LocalDateTime.now();
@@ -173,8 +194,20 @@ public class BungeeChatAdapter {
         builder.append(String.format("%s » ",
                 event.getMember() != null ? event.getMember().getEffectiveName() : event.getAuthor().getName()));
         builder.bold(true);
-        // Append message
-        builder.append(event.getMessage().getContentDisplay());
+        // Process and append message
+        String original = ChatColor.stripColor(event.getMessage().getContentStripped());
+        // Convert Discord shortcut emojis to ASCII emoticon form
+        String str = undoDiscordEmojiShortcuts(original);
+        // Convert remaining emoji to short-form
+        str = EmojiUtils.shortCodify(str, true);
+        // Remove all remaining non-supported Unicode
+        str = str.replaceAll("[^\\u0000-\\uFFFF]", ""); // From https://stackoverflow.com/a/8519863
+        D2BC.getPlugin().getLogger().fine(
+                String.format("Relaying message from Channel <%d> by User [%s]: %s\nConverted message: %s",
+                        event.getChannel().getIdLong(), event.getMember().getEffectiveName(),
+                        unicodeToAsciiEscape(original), unicodeToAsciiEscape(str))
+        );
+        builder.append(str);
         builder.bold(false);
         // Create final message
         BaseComponent[] message = builder.create();
@@ -182,6 +215,41 @@ public class BungeeChatAdapter {
         ProxyServer.getInstance().getPlayers().parallelStream()
                 .filter(this::filterPlayers).forEach(p -> p.sendMessage(ChatMessageType.CHAT, message));
         ProxyServer.getInstance().getConsole().sendMessage(message);
+    }
+
+    /**
+     * Reverts certain emoji which Discord automatically shortcuts
+     * @param discordMessage The message content from Discord to undo
+     * @return The message content with all shortcut emoji reverted
+     */
+    @Contract("null -> null; !null -> !null")
+    private String undoDiscordEmojiShortcuts(String discordMessage) {
+        if (discordMessage == null) {
+            return null;
+        }
+        for (Map.Entry<String, String> conversion : unicodeToShortcutMap.entrySet()) {
+            discordMessage = discordMessage.replace(conversion.getKey(), conversion.getValue());
+        }
+        return discordMessage;
+    }
+
+    /**
+     * Converts non-ASCII strings to Unicode escape sequences.
+     * Code from https://stackoverflow.com/a/28176793
+     * @param in Input string
+     * @return Input string with all non-ASCII converted to Unicode escape sequences
+     */
+    private String unicodeToAsciiEscape(String in) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < in.length(); i++) {
+            char ch = in.charAt(i);
+            if (ch <= 127) {
+                out.append(ch);
+            } else {
+                out.append("\\u").append(String.format("%04x", (int)ch));
+            }
+        }
+        return out.toString();
     }
 
     /**

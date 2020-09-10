@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.MarkdownSanitizer;
+import net.md_5.bungee.api.ChatColor;
 
 import javax.annotation.Nonnull;
 import java.util.logging.Level;
@@ -85,6 +87,7 @@ public class DiscordAdapter extends ListenerAdapter {
      * @param message The resulting chat message from the event
      */
     public void relayBungeeChatMessage(String type, String server, String user, String message) {
+        message = MarkdownSanitizer.escape(message);
         switch (type) {
             case "LOCAL":
                 if (relayLocalChat) {
@@ -102,6 +105,9 @@ public class DiscordAdapter extends ListenerAdapter {
                 break;
             case "SWITCH":
                 relaySwitchEvent(server, user);
+                break;
+            case "COMMAND":
+                //Do nothing
                 break;
             default:
                 D2BC.getPlugin().getLogger().warning(String.format("Unknown BungeeChat event: %s", type));
@@ -132,7 +138,7 @@ public class DiscordAdapter extends ListenerAdapter {
         }
         MessageBuilder builder = new MessageBuilder();
         builder.append(String.format("[%1$s] %2$s > ", server, user), MessageBuilder.Formatting.BOLD);
-        builder.append(message);
+        builder.append(ChatColor.stripColor(message));
         builder.stripMentions(D2BC.getPlugin().getJda());
         result.getFirst().sendMessage(builder.build()).queue();
     }
