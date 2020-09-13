@@ -32,7 +32,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.9'
     compile 'commons-io:commons-io:2.6'
     compile 'com.google.guava:guava:20.0'
-    compile ('net.dv8tion:JDA:4.1.0_81') {
+    compile ('net.dv8tion:JDA:4.2.0_168') {
         exclude module: 'opus-java'
     }
     compileOnly 'com.github.MyzelYam:PremiumVanishAPI:2.0.3'

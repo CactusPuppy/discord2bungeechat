@@ -1,3 +1,5 @@
 # Discord-related settings
 discord:
   channelID: <CHANGE ME>
+  rate-limit: 600
+  server-ip: play.example.com

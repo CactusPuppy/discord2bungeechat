@@ -1,9 +1,12 @@
 package com.github.cactuspuppy.d2bc;
 
 import com.github.cactuspuppy.d2bc.bungeechat.relay.BungeeChatAdapter;
+import com.github.cactuspuppy.d2bc.bungeecord.BungeecordAdapter;
+import com.github.cactuspuppy.d2bc.bungeecord.playercount.DefaultPlayerCountReporter;
+import com.github.cactuspuppy.d2bc.bungeecord.playercount.PlayerCount;
+import com.github.cactuspuppy.d2bc.bungeecord.playercount.PremiumVanishPlayerCountReporter;
 import com.github.cactuspuppy.d2bc.discord.command.DiscordCommandHub;
 import com.github.cactuspuppy.d2bc.discord.relay.DiscordAdapter;
-import com.github.cactuspuppy.d2bc.utils.Config;
 import com.github.cactuspuppy.d2bc.utils.FileConfig;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
@@ -19,6 +22,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -37,8 +41,10 @@ public class D2BC extends Plugin {
         plugin = this;
         loadConfig();
         initLogs();
+        initPlayerCounter();
         startJDA();
         registerListeners();
+        getProxy().getScheduler().runAsync(this, () -> discordAdapter.updateDiscordServerStatus(true));
         long elapsedMS = System.currentTimeMillis() - start;
         getLogger().info(ChatColor.LIGHT_PURPLE + "Time elapsed: " + ChatColor.BLUE + elapsedMS + " ms");
     }
@@ -114,6 +120,26 @@ public class D2BC extends Plugin {
         }
     }
 
+    private void initPlayerCounter() {
+        if (getProxy().getPluginManager().getPlugin("PremiumVanish") != null) {
+            getLogger().info(ChatColor.YELLOW + "PremiumVanish detected, enabling support...");
+            PlayerCount.setReporter(new PremiumVanishPlayerCountReporter());
+        } else {
+            getLogger().info(ChatColor.YELLOW + "Enabling default player counter...");
+            PlayerCount.setReporter(new DefaultPlayerCountReporter());
+        }
+        BungeecordAdapter updater = new BungeecordAdapter();
+        updater.setNextUpdate(Instant.now().getEpochSecond());
+        try {
+            updater.setRateLimit(Long.parseLong(getConfig().getOrDefault("discord.rate-limit", "300")));
+        } catch (NumberFormatException e) {
+            getLogger().severe("Discord rate-limit '%s' is not an integer");
+            updater.setRateLimit(600);
+        }
+        getProxy().getPluginManager().registerListener(this, updater);
+
+    }
+
     private void registerListeners() {
         Path bungeeChatLogsFolder = getBungeeChatLogsPath();
         if (bungeeChatLogsFolder == null) {
@@ -124,7 +150,7 @@ public class D2BC extends Plugin {
 
     @Override
     public void onDisable() {
-        //TODO
+        discordAdapter.updateDiscordServerStatus(false);
         jda.shutdown();
     }
 }
