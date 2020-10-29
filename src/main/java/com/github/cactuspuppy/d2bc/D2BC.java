@@ -11,6 +11,7 @@ import com.github.cactuspuppy.d2bc.utils.FileConfig;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.apache.commons.io.FileUtils;
@@ -53,10 +54,11 @@ public class D2BC extends Plugin {
         try {
             getLogger().info("Loading JDA Bot...");
 //            getLogger().info(String.format("Token: %s", getToken(getResourceAsStream("token.dat"))));
-            jda = new JDABuilder(getToken(getResourceAsStream("token.dat"))).build();
             discordAdapter = new DiscordAdapter();
             discordCommandHub = new DiscordCommandHub();
-            jda.addEventListener(discordAdapter, discordCommandHub);
+            jda = JDABuilder.createLight(getToken(getResourceAsStream("token.dat")), GatewayIntent.GUILD_MESSAGES)
+                .addEventListeners(discordAdapter, discordCommandHub)
+                .build();
             jda.awaitReady();
             getLogger().info("Bot loaded!");
         } catch (LoginException | InterruptedException e) {
