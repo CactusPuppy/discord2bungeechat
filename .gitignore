@@ -3,3 +3,4 @@
 .gradle
 build
 src/main/resources/token.dat
+target/
